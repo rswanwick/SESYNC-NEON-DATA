@@ -1,0 +1,26 @@
+
+library(rgdal) 
+library(gdalUtils)
+library(raster)
+library(tidycensus)
+library(FedData) #has to be dev version or won't dl 2016 data
+library(tidyverse)
+library(sf)
+library(glue)
+library(rslurm)
+library(dplyr)
+
+#get list of raster names
+setwd("/nfs/rswanwick-data/DASY/")
+
+rasters1 <- list.files('AZ', full.names = TRUE)
+
+raster.list <- lapply(rasters1, function(x) raster(x))
+
+names(raster.list) <- NULL
+
+raster.list$tolerance <- 0.4
+
+raster.list$fun <- mean
+
+raster.mosaic <- do.call(mosaic,raster.list)
